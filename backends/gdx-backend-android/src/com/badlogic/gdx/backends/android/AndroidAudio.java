@@ -35,6 +35,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /** An implementation of the {@link Audio} interface for Android.
  * 
@@ -43,6 +44,8 @@ public final class AndroidAudio implements Audio {
 	private final SoundPool soundPool;
 	private final AudioManager manager;
 	protected final List<AndroidMusic> musics = new ArrayList<AndroidMusic>();
+	public ObjectMap<String, MediaPlayer> registeredMediaPlayers = new ObjectMap<String, MediaPlayer>();
+	public boolean registerPlayers;
 
 	public AndroidAudio (Context context, AndroidApplicationConfiguration config) {
 		if (!config.disableAudio) {
@@ -114,6 +117,10 @@ public final class AndroidAudio implements Audio {
 				synchronized (musics) {
 					musics.add(music);
 				}
+				if(registerPlayers){
+					// tracks the media player with the resource path
+					registeredMediaPlayers.put(aHandle.file().getPath(), mediaPlayer);
+				}
 				return music;
 			} catch (Exception ex) {
 				throw new GdxRuntimeException("Error loading audio file: " + file
@@ -126,6 +133,10 @@ public final class AndroidAudio implements Audio {
 				AndroidMusic music = new AndroidMusic(this, mediaPlayer);
 				synchronized (musics) {
 					musics.add(music);
+				}
+				if(registerPlayers){
+					// tracks the media player with the resource path
+					registeredMediaPlayers.put(aHandle.file().getPath(), mediaPlayer);
 				}
 				return music;
 			} catch (Exception ex) {
