@@ -19,8 +19,8 @@ package com.badlogic.gdx.tests;
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;
 
-import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
-import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import com.badlogic.gdx.backends.iosmoe.IOSApplication;
+import com.badlogic.gdx.backends.iosmoe.IOSApplicationConfiguration;
 
 public class IOSRobovmTests extends IOSApplication.Delegate {
 	
@@ -28,7 +28,8 @@ public class IOSRobovmTests extends IOSApplication.Delegate {
 	protected IOSApplication createApplication() {
 		IOSApplicationConfiguration config = new IOSApplicationConfiguration();
 		config.useAccelerometer = false;
-		return new IOSApplication(new AccelerometerTest(), config);
+		config.useGL30 = true;
+		return new IOSApplication(new BulletTestCollection(), config);
 	}
 
 	public static void main(String[] argv) {

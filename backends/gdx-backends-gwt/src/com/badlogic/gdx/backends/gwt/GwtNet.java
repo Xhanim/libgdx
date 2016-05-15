@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Net.Protocol;
 import com.badlogic.gdx.net.HttpStatus;
+import com.badlogic.gdx.net.NetJavaServerSocketImpl;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
@@ -144,6 +146,8 @@ public class GwtNet implements Net {
 
 		builder.setTimeoutMillis(httpRequest.getTimeOut());
 
+		builder.setIncludeCredentials(httpRequest.getIncludeCredentials());
+		
 		try {
 			Request request = builder.sendRequest(valueInBody ? value : null, new RequestCallback() {
 
@@ -181,6 +185,11 @@ public class GwtNet implements Net {
 			requests.remove(httpRequest);
 			listeners.remove(httpRequest);
 		}
+	}
+	
+	@Override
+	public ServerSocket newServerSocket (Protocol protocol, String hostname, int port, ServerSocketHints hints) {
+		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override

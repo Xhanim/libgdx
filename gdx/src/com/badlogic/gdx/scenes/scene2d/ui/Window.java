@@ -66,13 +66,14 @@ public class Window extends Table {
 		setClip(true);
 
 		titleLabel = new Label(title, new LabelStyle(style.titleFont, style.titleFontColor));
+		titleLabel.setEllipsis(true);
 
 		titleTable = new Table() {
 			public void draw (Batch batch, float parentAlpha) {
 				if (drawTitleTable) super.draw(batch, parentAlpha);
 			}
 		};
-		titleTable.add(titleLabel).expandX().fillX();
+		titleTable.add(titleLabel).expandX().fillX().minWidth(0);
 		addActor(titleTable);
 
 		setStyle(style);
@@ -94,7 +95,7 @@ public class Window extends Table {
 					int border = resizeBorder;
 					float width = getWidth(), height = getHeight();
 					edge = 0;
-					if (isResizable) {
+					if (isResizable && x >= 0 && x < width && y >= 0 && y < height) {
 						if (x < border) edge |= Align.left;
 						if (x > width - border) edge |= Align.right;
 						if (y < border) edge |= Align.bottom;
@@ -109,8 +110,8 @@ public class Window extends Table {
 					dragging = edge != 0;
 					startX = x;
 					startY = y;
-					lastX = x;
-					lastY = y;
+					lastX = x - width;
+					lastY = y - height;
 				}
 				return edge != 0 || isModal;
 			}
@@ -149,20 +150,18 @@ public class Window extends Table {
 					windowY += amountY;
 				}
 				if ((edge & Align.right) != 0) {
-					float amountX = x - lastX;
+					float amountX = x - lastX - width;
 					if (width + amountX < minWidth) amountX = minWidth - width;
 					if (clampPosition && windowX + width + amountX > stage.getWidth()) amountX = stage.getWidth() - windowX - width;
 					width += amountX;
 				}
 				if ((edge & Align.top) != 0) {
-					float amountY = y - lastY;
+					float amountY = y - lastY - height;
 					if (height + amountY < minHeight) amountY = minHeight - height;
 					if (clampPosition && windowY + height + amountY > stage.getHeight())
 						amountY = stage.getHeight() - windowY - height;
 					height += amountY;
 				}
-				lastX = x;
-				lastY = y;
 				setBounds(Math.round(windowX), Math.round(windowY), Math.round(width), Math.round(height));
 			}
 

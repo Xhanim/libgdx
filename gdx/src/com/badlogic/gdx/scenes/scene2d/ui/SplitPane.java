@@ -234,6 +234,7 @@ public class SplitPane extends WidgetGroup {
 		applyTransform(batch, computeTransform());
 		Matrix4 transform = batch.getTransformMatrix();
 		if (firstWidget != null) {
+			batch.flush();
 			getStage().calculateScissors(firstWidgetBounds, firstScissors);
 			if (ScissorStack.pushScissors(firstScissors)) {
 				if (firstWidget.isVisible()) firstWidget.draw(batch, parentAlpha * color.a);
@@ -242,6 +243,7 @@ public class SplitPane extends WidgetGroup {
 			}
 		}
 		if (secondWidget != null) {
+			batch.flush();
 			getStage().calculateScissors(secondWidgetBounds, secondScissors);
 			if (ScissorStack.pushScissors(secondScissors)) {
 				if (secondWidget.isVisible()) secondWidget.draw(batch, parentAlpha * color.a);
@@ -271,7 +273,7 @@ public class SplitPane extends WidgetGroup {
 	}
 
 	public void setMaxSplitAmount (float maxAmount) {
-		if (maxAmount > 1) throw new GdxRuntimeException("maxAmount has to be >= 0");
+		if (maxAmount > 1) throw new GdxRuntimeException("maxAmount has to be <= 1");
 		if (maxAmount <= minAmount) throw new GdxRuntimeException("maxAmount has to be > minAmount");
 		this.maxAmount = maxAmount;
 	}

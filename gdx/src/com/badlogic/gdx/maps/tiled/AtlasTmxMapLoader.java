@@ -348,7 +348,7 @@ public class AtlasTmxMapLoader extends BaseTmxMapLoader<AtlasTmxMapLoader.AtlasT
 			FileHandle atlasHandle = getRelativeFileHandle(tmxFile, atlasFilePath);
 			atlasHandle = resolve(atlasHandle.path());
 			TextureAtlas atlas = resolver.getAtlas(atlasHandle.path());
-			String regionsName = atlasHandle.nameWithoutExtension();
+			String regionsName = name;
 
 			for (Texture texture : atlas.getTextures()) {
 				trackedTextures.add(texture);
@@ -366,15 +366,20 @@ public class AtlasTmxMapLoader extends BaseTmxMapLoader<AtlasTmxMapLoader.AtlasT
 			props.put("margin", margin);
 			props.put("spacing", spacing);
 
-			for (AtlasRegion region : atlas.findRegions(regionsName)) {
-				// handle unused tile ids
-				if (region != null) {
-					StaticTiledMapTile tile = new StaticTiledMapTile(region);
-					int tileid = firstgid + region.index;
-					tile.setId(tileid);
-					tile.setOffsetX(offsetX);
-					tile.setOffsetY(flipY ? -offsetY : offsetY);
-					tileset.putTile(tileid, tile);
+			if (imageSource != null && imageSource.length() > 0) {
+				int lastgid = firstgid + ((imageWidth / tilewidth) * (imageHeight / tileheight)) - 1;
+				for (AtlasRegion region : atlas.findRegions(regionsName)) {
+					// handle unused tile ids
+					if (region != null) {
+						int tileid = region.index + 1;
+						if (tileid >= firstgid && tileid <= lastgid) {
+							StaticTiledMapTile tile = new StaticTiledMapTile(region);
+							tile.setId(tileid);
+							tile.setOffsetX(offsetX);
+							tile.setOffsetY(flipY ? -offsetY : offsetY);
+							tileset.putTile(tileid, tile);
+						}
+					}
 				}
 			}
 

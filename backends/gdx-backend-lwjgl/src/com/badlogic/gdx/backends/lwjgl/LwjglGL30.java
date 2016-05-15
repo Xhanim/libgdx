@@ -18,6 +18,7 @@ package com.badlogic.gdx.backends.lwjgl;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
@@ -25,7 +26,6 @@ import java.nio.ShortBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
@@ -35,9 +35,7 @@ import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.GL41;
-import org.lwjgl.opengl.GL42;
 import org.lwjgl.opengl.GL43;
-import org.lwjgl.opengl.GLSync;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -62,9 +60,22 @@ class LwjglGL30 extends LwjglGL20 implements com.badlogic.gdx.graphics.GL30 {
 
 	@Override
 	public void glTexImage3D (int target, int level, int internalformat, int width, int height, int depth, int border, int format,
-		int type, Buffer pixels) {
-		if(pixels instanceof ByteBuffer) GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (ByteBuffer)pixels);
-		else throw new GdxRuntimeException("pixels must be byte buffer");
+			int type, Buffer pixels) {
+		if (pixels == null)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (ByteBuffer)null);
+		else if (pixels instanceof ByteBuffer)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (ByteBuffer)pixels);
+		else if (pixels instanceof ShortBuffer)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (ShortBuffer)pixels);
+		else if (pixels instanceof IntBuffer)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (IntBuffer)pixels);
+		else if (pixels instanceof FloatBuffer)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (FloatBuffer)pixels);
+		else if (pixels instanceof DoubleBuffer)
+			GL12.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, (DoubleBuffer)pixels);
+		else
+			throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+					+ " with this method. Use ByteBuffer, ShortBuffer, IntBuffer, FloatBuffer or DoubleBuffer instead. Blame LWJGL");
 	}
 
 	@Override
@@ -75,9 +86,20 @@ class LwjglGL30 extends LwjglGL20 implements com.badlogic.gdx.graphics.GL30 {
 
 	@Override
 	public void glTexSubImage3D (int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth,
-		int format, int type, Buffer pixels) {
-		if(pixels instanceof ByteBuffer) GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (ByteBuffer)pixels);
-		else throw new GdxRuntimeException("pixels must be byte buffer");
+			int format, int type, Buffer pixels) {
+		if (pixels instanceof ByteBuffer)
+			GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (ByteBuffer)pixels);
+		else if (pixels instanceof ShortBuffer)
+			GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (ShortBuffer)pixels);
+		else if (pixels instanceof IntBuffer)
+			GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (IntBuffer)pixels);
+		else if (pixels instanceof FloatBuffer)
+			GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (FloatBuffer)pixels);
+		else if (pixels instanceof DoubleBuffer)
+			GL12.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (DoubleBuffer)pixels);
+		else
+			throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+					+ " with this method. Use ByteBuffer, ShortBuffer, IntBuffer, FloatBuffer or DoubleBuffer instead. Blame LWJGL");
 	}
 
 	@Override
@@ -616,21 +638,10 @@ class LwjglGL30 extends LwjglGL20 implements com.badlogic.gdx.graphics.GL30 {
 		GL41.glProgramParameteri(program, pname, value);
 	}
 
-//	@Override
-//	public void glInvalidateFramebuffer (int target, int numAttachments, int[] attachments, int offset) {
-//		throw new UnsupportedOperationException("not implemented");
-//	}
-
 	@Override
 	public void glInvalidateFramebuffer (int target, int numAttachments, IntBuffer attachments) {
 		GL43.glInvalidateFramebuffer(target, attachments);
 	}
-
-//	@Override
-//	public void glInvalidateSubFramebuffer (int target, int numAttachments, int[] attachments, int offset, int x, int y,
-//		int width, int height) {
-//		throw new UnsupportedOperationException("not implemented");
-//	}
 
 	@Override
 	public void glInvalidateSubFramebuffer (int target, int numAttachments, IntBuffer attachments, int x, int y, int width,

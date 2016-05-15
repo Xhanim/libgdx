@@ -48,9 +48,11 @@ public class BitmapFontTest extends GdxTest {
 	@Override
 	public void create () {
 		spriteBatch = new SpriteBatch();
-		font = new BitmapFont(Gdx.files.internal("data/verdana39.fnt"), false);
+		// font = new BitmapFont(Gdx.files.internal("data/verdana39.fnt"), false);
+		font = new BitmapFont(Gdx.files.internal("data/arial-32-pad.fnt"), false);
 		// font = new FreeTypeFontGenerator(Gdx.files.internal("data/arial.ttf")).generateFont(new FreeTypeFontParameter());
 		font.getData().markupEnabled = true;
+		font.getData().breakChars = new char[] {'-'};
 
 		multiPageFont = new BitmapFont(Gdx.files.internal("data/multipagefont.fnt"));
 
@@ -90,24 +92,30 @@ public class BitmapFontTest extends GdxTest {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		// Test wrapping with font.
-		if (false) {
-			BitmapFont font = label.getStyle().font;
-			label.getStyle().font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		// Test wrapping or truncation with the font directly.
+		if (!true) {
+			// BitmapFont font = label.getStyle().font;
+			BitmapFont font = this.font;
+			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 
 			font.getData().setScale(2f);
 			renderer.begin(ShapeRenderer.ShapeType.Line);
 			renderer.setColor(0, 1, 0, 1);
 			float w = Gdx.input.getX();
-			// w = 255;
+			// w = 855;
 			renderer.rect(10, 10, w, 500);
 			renderer.end();
 
 			spriteBatch.begin();
 			String text = "your new";
-			text = "How quickly [RED]daft jumping zebras vex.";
-			layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, false, "...");
-			// layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, true, null);
+			 text = "How quickly [RED]daft jumping zebras vex.";
+			// text = "Another font wrap is-sue, this time with    multiple whitespace characters.";
+			text = "test with AGWlWi      AGWlWi issue";
+			if (true) { // Test wrap.
+				layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, true, null);
+			} else { // Test truncation.
+				layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, false, "...");
+			}
 			float meowy = (500 / 2 + layout.height / 2 + 5);
 			font.draw(spriteBatch, layout, 10, 10 + meowy);
 			spriteBatch.end();
@@ -124,13 +132,13 @@ public class BitmapFontTest extends GdxTest {
 		}
 
 		// Test wrapping with label.
-		if (true) {
+		if (false) {
 			label.debug();
 			label.getStyle().font = font;
 			label.setStyle(label.getStyle());
-			label.setText("How quickly [RED]daft jumping zebras vex.");
+			label.setText("How quickly [RED]daft[] jumping zebras vex.");
 			label.setWrap(true);
-			label.setEllipsis(true);
+//			label.setEllipsis(true);
 			label.setAlignment(Align.center, Align.right);
 			label.setWidth(Gdx.input.getX() - label.getX());
 			label.setHeight(label.getPrefHeight());

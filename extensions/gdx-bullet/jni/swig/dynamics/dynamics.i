@@ -16,6 +16,12 @@
 %ignore btSolverBody::getPushVelocity;
 %ignore btSolverBody::getTurnVelocity;
 
+%ignore btSequentialImpulseConstraintSolver::getSSE2ConstraintRowSolverGeneric();
+%ignore btSequentialImpulseConstraintSolver::getSSE2ConstraintRowSolverLowerLimit();
+%ignore btSequentialImpulseConstraintSolver::getSSE4_1ConstraintRowSolverGeneric();
+%ignore btSequentialImpulseConstraintSolver::getSSE4_1ConstraintRowSolverLowerLimit();
+
+
 %typemap(javaimports) SWIGTYPE	%{
 import com.badlogic.gdx.physics.bullet.BulletBase;
 import com.badlogic.gdx.physics.bullet.linearmath.*;
@@ -46,6 +52,9 @@ import com.badlogic.gdx.math.Matrix4;
 %}
 
 %feature("director") InternalTickCallback;
+%feature("director") CustomActionInterface;
+%ignore CustomActionInterface::updateAction(btCollisionWorld*, btScalar);
+%ignore CustomActionInterface::debugDraw(btIDebugDraw*);
 
 %include "./btRigidBody.i"
 
@@ -70,6 +79,11 @@ import com.badlogic.gdx.math.Matrix4;
 #include <BulletDynamics/Dynamics/btActionInterface.h>
 %}
 %include "BulletDynamics/Dynamics/btActionInterface.h"
+
+%{
+#include <gdx/dynamics/CustomActionInterface.h>
+%}
+%include "gdx/dynamics/CustomActionInterface.h"
 
 %{
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
@@ -151,6 +165,11 @@ import com.badlogic.gdx.math.Matrix4;
 #include <BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h>
 %}
 %include "BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h"
+
+%{
+#include <BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h>
+%}
+%include "BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h"
 
 %{
 #include <BulletDynamics/ConstraintSolver/btHingeConstraint.h>
