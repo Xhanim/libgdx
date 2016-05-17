@@ -233,6 +233,10 @@ project(":extensions:gdx-freetype") {
     dependencies { compile project(":gdx"); }
 }
 
+project(":extensions:gdx-audio") {
+    dependencies { compile project(":gdx"); }
+}
+
 project(":extensions:gdx-jnigen") {
     dependencies { compile "com.github.javaparser:javaparser-core:2.3.0" }
 }
